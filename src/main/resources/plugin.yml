@@ -9,3 +9,9 @@ folia-supported: true
 
 depend:
   - BukkitOfUtils
+
+commands:
+  progression:
+    description: Manage player progression
+    aliases:
+      - prog

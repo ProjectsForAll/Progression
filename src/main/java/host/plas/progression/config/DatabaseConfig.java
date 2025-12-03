@@ -1,13 +1,13 @@
-package host.plas.exampleproject.config;
+package host.plas.progression.config;
 
 import gg.drak.thebase.storage.resources.flat.simple.SimpleConfiguration;
 import host.plas.bou.sql.ConnectorSet;
 import host.plas.bou.sql.DatabaseType;
-import host.plas.exampleproject.ExampleProject;
+import host.plas.progression.Progression;
 
 public class DatabaseConfig extends SimpleConfiguration {
     public DatabaseConfig() {
-        super("database-config.yml", ExampleProject.getInstance(), false);
+        super("database-config.yml", Progression.getInstance(), false);
     }
 
     @Override

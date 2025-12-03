@@ -1,7 +1,7 @@
-package host.plas.exampleproject.data;
+package host.plas.progression.data;
 
 import host.plas.bou.utils.UuidUtils;
-import host.plas.exampleproject.ExampleProject;
+import host.plas.progression.Progression;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -39,14 +39,14 @@ public class PlayerManager {
     }
 
     public static void savePlayer(PlayerData player) {
-        ExampleProject.getDatabase().putPlayer(player);
+        Progression.getDatabase().putPlayer(player);
     }
 
     public static void savePlayer(PlayerData player, boolean async) {
-        ExampleProject.getDatabase().putPlayer(player, async);
+        Progression.getDatabase().putPlayer(player, async);
     }
 
-    public static PlayerData createPlayer(Player player) {
+    public static PlayerData createPlayer(OfflinePlayer player) {
         return new PlayerData(player);
     }
 
@@ -54,7 +54,7 @@ public class PlayerManager {
         return new PlayerData(uuid);
     }
 
-    public static PlayerData getOrCreatePlayer(Player player) {
+    public static PlayerData getOrCreatePlayer(OfflinePlayer player) {
         String uuid = player.getUniqueId().toString();
 
         Optional<PlayerData> data = getPlayer(uuid);
@@ -63,7 +63,7 @@ public class PlayerManager {
         PlayerData d = createPlayer(player);
         d.load();
 
-        d.augment(ExampleProject.getDatabase().pullPlayerThreaded(uuid), false);
+        d.augment(Progression.getDatabase().pullPlayerThreaded(uuid), false);
 
         return d;
     }
@@ -80,7 +80,7 @@ public class PlayerManager {
         d.setName(player.getName());
         d.load();
 
-        d.augment(ExampleProject.getDatabase().pullPlayerThreaded(uuid), true);
+        d.augment(Progression.getDatabase().pullPlayerThreaded(uuid), true);
 
         return Optional.of(d);
     }

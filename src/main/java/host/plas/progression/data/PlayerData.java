@@ -1,8 +1,10 @@
-package host.plas.exampleproject.data;
+package host.plas.progression.data;
 
 import gg.drak.thebase.objects.Identifiable;
-import host.plas.exampleproject.ExampleProject;
-import host.plas.exampleproject.events.own.PlayerCreationEvent;
+import host.plas.bou.utils.SenderUtils;
+import host.plas.progression.Progression;
+import host.plas.progression.data.stats.StatsInstance;
+import host.plas.progression.events.own.PlayerCreationEvent;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -17,18 +19,27 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Getter @Setter
 public class PlayerData implements Identifiable {
     private String identifier;
+    private AtomicBoolean fullyLoaded;
 
     private String name;
 
-    private AtomicBoolean fullyLoaded;
+    private long firstJoinTimestamp;
+    private long lastJoinTimestamp;
+
+    private long stars;
+
+    private StatsInstance stats;
 
     public PlayerData(String identifier, String name) {
         this.identifier = identifier;
         this.name = name;
+
+        loadDefaults();
+
         this.fullyLoaded = new AtomicBoolean(false);
     }
 
-    public PlayerData(Player player) {
+    public PlayerData(OfflinePlayer player) {
         this(player.getUniqueId().toString(), player.getName());
     }
 
@@ -36,11 +47,20 @@ public class PlayerData implements Identifiable {
         this(uuid, "");
     }
 
+    public void loadDefaults() {
+        this.firstJoinTimestamp = System.currentTimeMillis();
+        this.lastJoinTimestamp = System.currentTimeMillis();
+
+        this.stars = 0;
+
+        this.stats = new StatsInstance(this.identifier, true);
+    }
+
     public Optional<Player> asPlayer() {
         try {
             return Optional.ofNullable(Bukkit.getPlayer(UUID.fromString(identifier)));
         } catch (Throwable e) {
-            ExampleProject.getInstance().logWarning("Failed to get player from identifier: " + identifier, e);
+            Progression.getInstance().logWarning("Failed to get player from identifier: " + identifier, e);
 
             return Optional.empty();
         }
@@ -50,7 +70,7 @@ public class PlayerData implements Identifiable {
         try {
             return Optional.of(Bukkit.getOfflinePlayer(UUID.fromString(identifier)));
         } catch (Throwable e) {
-            ExampleProject.getInstance().logWarning("Failed to get offline player from identifier: " + identifier, e);
+            Progression.getInstance().logWarning("Failed to get offline player from identifier: " + identifier, e);
 
             return Optional.empty();
         }
@@ -81,7 +101,7 @@ public class PlayerData implements Identifiable {
 
         future.whenComplete((data, error) -> {
             if (error != null) {
-                ExampleProject.getInstance().logWarning("Failed to augment player data", error);
+                Progression.getInstance().logWarning("Failed to augment player data", error);
 
                 this.fullyLoaded.set(true);
                 return;
@@ -91,6 +111,12 @@ public class PlayerData implements Identifiable {
                 PlayerData newData = data.get();
 
                 this.name = newData.getName();
+                this.firstJoinTimestamp = newData.getFirstJoinTimestamp();
+                this.lastJoinTimestamp = newData.getLastJoinTimestamp();
+
+                this.stars = newData.getStars();
+
+                this.stats = newData.getStats();
             } else {
                 if (! isGet) {
                     new PlayerCreationEvent(this).fire();
@@ -120,5 +146,43 @@ public class PlayerData implements Identifiable {
             Thread.onSpinWait();
         }
         return this;
+    }
+
+    public AtomicBoolean isTicking = new AtomicBoolean(false);
+
+    public void tick() {
+        if (isTicking.get()) return;
+        isTicking.set(true);
+
+        waitUntilFullyLoaded();
+
+        if (getStats().canLevelUp(getStars())) {
+            levelUp();
+        }
+
+        isTicking.set(false);
+    }
+
+    public void incrementStars() {
+        this.stars += 1;
+    }
+
+    public void levelUp() {
+        incrementStars();
+
+        playLevelUpEffects();
+    }
+
+    public void playLevelUpEffects() {
+        playLevelUpMessage();
+        playLevelUpSound();
+    }
+
+    public void playLevelUpMessage() {
+        asPlayer().ifPresent(player -> SenderUtils.getSender(player).sendMessage("&f&lLEVEL UP&7! &7&oYou are now &e⭐ &a" + getStars() + " &7&o!"));
+    }
+
+    public void playLevelUpSound() {
+        asPlayer().ifPresent(player -> player.playSound(player.getLocation(), "entity.player.levelup", 1.0f, 1.0f));
     }
 }
