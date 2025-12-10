@@ -11,22 +11,19 @@ public class MainConfig extends SimpleConfiguration {
 
     @Override
     public void init() {
-        getStarLeveling();
+        getStarFormula();
+        getMaxExpNeeded();
     }
 
     public String getStarFormula() {
         reloadResource();
 
-        return getOrSetDefault("star-leveling.xp.formula", "5 * (%stars_current% ^ 2) + 50 * %stars_current% - (5 * (%stars_previous% ^ 2) + 50 * %stars_previous%) + 100");
+        return getOrSetDefault("star-leveling.xp.formula", "(%stars_current% * 250) + 500");
     }
 
     public double getMaxExpNeeded() {
         reloadResource();
 
-        return getOrSetDefault("star-leveling.xp.max-needed", 1000000.0);
-    }
-
-    public StarLeveling getStarLeveling() {
-        return new StarLeveling(getStarFormula(), getMaxExpNeeded());
+        return getOrSetDefault("star-leveling.xp.max-needed", 5000.0);
     }
 }
