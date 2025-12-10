@@ -16,6 +16,7 @@ public class Statements {
                         "FirstJoinTimestamp BIGINT NOT NULL DEFAULT 0, " +
                         "LastJoinTimestamp BIGINT NOT NULL DEFAULT 0, " +
                         "Stars BIGINT NOT NULL DEFAULT 0, " +
+                        "CountedExperience DOUBLE NOT NULL DEFAULT 0, " +
                         "PRIMARY KEY (Uuid) " +
                         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;;" +
                         "CREATE TABLE IF NOT EXISTS `%table_prefix%Stats` ( " +
@@ -26,11 +27,11 @@ public class Statements {
                         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;;"
         ),
         PUSH_PLAYER_MAIN("INSERT INTO `%table_prefix%Players` ( " +
-                "Uuid, Name, FirstJoinTimestamp, LastJoinTimestamp, Stars " +
+                "Uuid, Name, FirstJoinTimestamp, LastJoinTimestamp, Stars, CountedExperience " +
                 ") VALUES ( " +
-                "?, ?, ?, ?, ? " +
+                "?, ?, ?, ?, ?, ? " +
                 ") ON DUPLICATE KEY UPDATE " +
-                "Name = ?, FirstJoinTimestamp = ?, LastJoinTimestamp = ?, Stars = ? " +
+                "Name = ?, FirstJoinTimestamp = ?, LastJoinTimestamp = ?, Stars = ?, CountedExperience = ? " +
                 ";"),
         PUSH_STAT_MAIN("INSERT INTO `%table_prefix%Stats` ( " +
                 "Uuid, Type, Value " +
@@ -61,6 +62,7 @@ public class Statements {
                         "FirstJoinTimestamp BIGINT NOT NULL DEFAULT 0, " +
                         "LastJoinTimestamp BIGINT NOT NULL DEFAULT 0, " +
                         "Stars BIGINT NOT NULL DEFAULT 0, " +
+                        "CountedExperience DOUBLE NOT NULL DEFAULT 0, " +
                         "PRIMARY KEY (Uuid) " +
                         ");;" +
                 "CREATE TABLE IF NOT EXISTS `%table_prefix%Stats` ( " +
@@ -71,9 +73,9 @@ public class Statements {
                         ");;"
         ),
         PUSH_PLAYER_MAIN("INSERT OR REPLACE INTO `%table_prefix%Players` ( " +
-                "Uuid, Name, FirstJoinTimestamp, LastJoinTimestamp, Stars " +
+                "Uuid, Name, FirstJoinTimestamp, LastJoinTimestamp, Stars, CountedExperience " +
                 ") VALUES ( " +
-                "?, ?, ?, ?, ? " +
+                "?, ?, ?, ?, ?, ? " +
                 ");"),
         PUSH_STAT_MAIN("INSERT OR REPLACE INTO `%table_prefix%Stats` ( " +
                 "Uuid, Type, Value " +

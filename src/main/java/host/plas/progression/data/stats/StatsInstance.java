@@ -1,7 +1,9 @@
 package host.plas.progression.data.stats;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import gg.drak.thebase.async.AsyncUtils;
 import gg.drak.thebase.objects.Identified;
+import host.plas.progression.config.bits.StarLeveling;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,8 +17,6 @@ public class StatsInstance implements Identified {
     private String identifier;
 
     private ConcurrentSkipListSet<InstancedStat> stats = new ConcurrentSkipListSet<>();
-
-    private AtomicDouble levelUpRequirement = new AtomicDouble(500);
 
     public StatsInstance(String identifier, ConcurrentSkipListSet<InstancedStat> stats) {
         this.identifier = identifier;
@@ -164,29 +164,5 @@ public class StatsInstance implements Identified {
 
     public boolean hasOne() {
         return ! isEmpty();
-    }
-
-    public boolean canLevelUp(long withStars) {
-        return getAmountLeftToLevelUp(withStars) <= 0d;
-    }
-
-    public double getAmountNeededForLevelUp(long withStars) {
-        return getLevelUpRequirement().get() * withStars;
-    }
-
-    public double getAmountLeftToLevelUp(long withStars) {
-        double total = calculateTotal();
-        double requirement = getAmountNeededForLevelUp(withStars);
-
-        if (total >= requirement) return 0d;
-
-        return requirement - total;
-    }
-
-    public double getCurrentExp(long withStars) {
-        double total = calculateTotal();
-        double requirementForLast = getAmountNeededForLevelUp(withStars - 1);
-
-        return total - requirementForLast;
     }
 }

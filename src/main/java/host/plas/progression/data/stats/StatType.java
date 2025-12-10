@@ -12,6 +12,9 @@ public enum StatType {
     FISH_CAUGHT(10),
     ITEMS_ENCHANTED(1.5),
     CHAT_MESSAGES_SENT(0.5),
+    ITEMS_CRAFTED(10),
+    JOINS(0.5),
+    LEAVES(0.5),
     ;
 
     private final double defaultWeight;

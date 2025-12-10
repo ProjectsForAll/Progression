@@ -105,7 +105,7 @@ public class ProgressionCMD extends SimplifiedCommand {
                 switch (action2Enum) {
                     case GET:
                         long stars = data.getStars();
-                        ctx.sendMessage("&a" + target.getName() + " has " + stars + " stars.");
+                        ctx.sendMessage("&f" + target.getName() + " &ehas &a" + stars + " &estars&7.");
                         return true;
                     case SET:
                     case ADD:
@@ -126,17 +126,17 @@ public class ProgressionCMD extends SimplifiedCommand {
                         switch (action2Enum) {
                             case SET:
                                 data.setStars(amount);
-                                ctx.sendMessage("&aSet " + target.getName() + "'s stars to " + amount + ".");
+                                ctx.sendMessage("&eSet &f" + target.getName() + "&7'&fs &estars to &a" + amount + "&7.");
                                 return true;
                             case ADD:
                                 long currentStars = data.getStars();
                                 data.setStars(currentStars + amount);
-                                ctx.sendMessage("&aAdded " + amount + " stars to " + target.getName() + ".");
+                                ctx.sendMessage("&eAdded &a" + amount + " &estars to &f" + target.getName() + "&7.");
                                 return true;
                             case REMOVE:
                                 long current = data.getStars();
                                 data.setStars(Math.max(0, current - amount));
-                                ctx.sendMessage("&aRemoved " + amount + " stars from " + target.getName() + ".");
+                                ctx.sendMessage("&eRemoved &a" + amount + " &estars from &f" + target.getName() + "&7.");
                                 return true;
                         }
                 }

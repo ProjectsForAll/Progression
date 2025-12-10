@@ -1,8 +1,10 @@
 package host.plas.progression.data;
 
+import gg.drak.thebase.async.AsyncUtils;
 import gg.drak.thebase.objects.Identifiable;
 import host.plas.bou.utils.SenderUtils;
 import host.plas.progression.Progression;
+import host.plas.progression.config.bits.StarLeveling;
 import host.plas.progression.data.stats.StatsInstance;
 import host.plas.progression.events.own.PlayerCreationEvent;
 import lombok.Getter;
@@ -27,6 +29,7 @@ public class PlayerData implements Identifiable {
     private long lastJoinTimestamp;
 
     private long stars;
+    private double countedExperience;
 
     private StatsInstance stats;
 
@@ -148,19 +151,49 @@ public class PlayerData implements Identifiable {
         return this;
     }
 
-    public AtomicBoolean isTicking = new AtomicBoolean(false);
+    public AtomicBoolean isTickingAtomic = new AtomicBoolean(false);
+
+    public boolean isTicking() {
+        return isTickingAtomic.get();
+    }
+
+    public void setTicking(boolean ticking) {
+        isTickingAtomic.set(ticking);
+    }
 
     public void tick() {
-        if (isTicking.get()) return;
-        isTicking.set(true);
+        if (isTicking()) return;
+        setTicking(true);
 
-        waitUntilFullyLoaded();
+        AsyncUtils.executeAsync(() -> {
+            waitUntilFullyLoaded();
 
-        if (getStats().canLevelUp(getStars())) {
-            levelUp();
-        }
+            StarLeveling.checkCanLevelUp(this);
 
-        isTicking.set(false);
+            setTicking(false);
+        });
+    }
+
+    public double addCountedExperience(double amount) {
+        this.countedExperience += amount;
+
+        return this.countedExperience;
+    }
+
+    public double removeCountedExperience(double amount) {
+        this.countedExperience -= amount;
+
+        if (this.countedExperience < 0) this.countedExperience = 0;
+
+        return this.countedExperience;
+    }
+
+    /**
+     * Get the total current experience of the player regardless of star level.
+     * @return The current experience.
+     */
+    public double getTotalExperience() {
+        return getStats().calculateTotal();
     }
 
     public void incrementStars() {

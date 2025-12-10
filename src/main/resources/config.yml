@@ -1,0 +1,4 @@
+star-leveling:
+  xp:
+    formula: "1500 * %stars_current%"
+    max-needed: 7000.0

@@ -60,12 +60,14 @@ public class OwnOperator extends DBOperator {
                     stmt.setLong(i.getAndIncrement(), playerData.getFirstJoinTimestamp());
                     stmt.setLong(i.getAndIncrement(), playerData.getLastJoinTimestamp());
                     stmt.setLong(i.getAndIncrement(), playerData.getStars());
+                    stmt.setDouble(i.getAndIncrement(), playerData.getCountedExperience());
 
                     if (getType() == DatabaseType.MYSQL) {
                         stmt.setString(i.getAndIncrement(), playerData.getName());
                         stmt.setLong(i.getAndIncrement(), playerData.getFirstJoinTimestamp());
                         stmt.setLong(i.getAndIncrement(), playerData.getLastJoinTimestamp());
                         stmt.setLong(i.getAndIncrement(), playerData.getStars());
+                        stmt.setDouble(i.getAndIncrement(), playerData.getCountedExperience());
                     }
                 } catch (Throwable e) {
                     Progression.getInstance().logWarning("Failed to set values for statement: " + s1, e);
@@ -115,12 +117,14 @@ public class OwnOperator extends DBOperator {
                         long firstJoin = rs.getLong("FirstJoinTimestamp");
                         long lastJoin = rs.getLong("LastJoinTimestamp");
                         long stars = rs.getLong("Stars");
+                        double countedExp = rs.getDouble("CountedExperience");
 
                         PlayerData playerData = new PlayerData(uuid, name);
 
                         playerData.setFirstJoinTimestamp(firstJoin);
                         playerData.setLastJoinTimestamp(lastJoin);
                         playerData.setStars(stars);
+                        playerData.setCountedExperience(countedExp);
 
                         ref.set(Optional.of(playerData));
                     }
